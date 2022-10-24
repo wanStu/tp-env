@@ -1,0 +1,1 @@
+docker build -f ./wanqq-php-8.1.dockerfile -t wanqq-php:8.1 . > ./build.log
