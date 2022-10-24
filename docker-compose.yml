@@ -1,0 +1,37 @@
+version: "3.8"
+services:
+    redis_latest:
+        image: redis:latest
+        networks:
+            - network
+    wanqq-php_8.1:
+        build: ./wanqq-php-8.1.dockerfile
+        image: wanqq-php:8.1
+        ports:
+            - 2346:2346
+            - 2345:2345
+        volumes:
+            - ../../src/://usr/share/nginx/html/:rw
+            - ./php/conf.d/php.ini:/opt/bitnami/php/etc/php.ini:rw
+        links:
+            - "redis_latest:redis"
+        networks:
+            - network
+    nginx_1.21:
+        image: nginx:1.21
+        ports:
+            - 8004:80
+        privileged: true
+        volumes:
+            - ./nginx/conf.d/:/etc/nginx/conf.d/:rw
+            - ./nginx/log/:/var/log/nginx/:rw
+            - ../../src/:/usr/share/nginx/html/:rw
+        depends_on:
+            - wanqq-php_7.4
+        links:
+            - "wanqq-php_7.4:php"
+            - "redis_latest:redis"
+        networks:
+            - network
+networks:
+    network:
